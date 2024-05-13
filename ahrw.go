@@ -50,6 +50,11 @@ type Node interface {
 
 var _ Node = &Server{}
 
+type noCopy struct{}
+
+func (*noCopy) Lock()   {}
+func (*noCopy) Unlock() {}
+
 // AHRW stands for Aggregated Highest Random Weight.
 //
 // It implements Rendezvous Hashing, mapping objects to respective nodes
@@ -65,6 +70,7 @@ var _ Node = &Server{}
 // efficiency should only be created once and re-used. On the other hand
 // AHRW instance should be recreated to change set of active nodes.
 type AHRW struct {
+	_     noCopy
 	nodes []Node
 	m     []atomic.Pointer[Node]
 }
